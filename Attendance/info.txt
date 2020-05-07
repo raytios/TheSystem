@@ -1,0 +1,15 @@
+Benedict (superadmin)
+qweqwe321
+Can do all
+
+Leianne  (operator)
+opeope123
+Can create employee& check, delete details
+
+Biboi	(user)
+useuse123
+Can create employee and delete details
+
+Moony	(view)
+babybaby123
+Can only view

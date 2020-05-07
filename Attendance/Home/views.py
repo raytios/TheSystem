@@ -9,53 +9,86 @@ from .models import Employee, Check
 
 
 def create_employee(request):
-    if not request.user.is_authenticated():
-        return render(request, 'Home/login.html')
-    else:
-        form = EmployeeForm(request.POST or None, request.FILES or None)
-        if form.is_valid():
-            employee = form.save(commit=False)
-            employee.user = request.user
-            employee.save()
-            return render(request, 'Home/detail.html', {'employee': employee})
-        context = {
-            "form": form,
-        }
-        return render(request, 'Home/create_employee.html', context)
+        
+    roles = Employee.objects.filter(user=request.user)
+    for role in roles:
+        role1= role.user_type      
+ 
+        if not request.user.is_authenticated:
+            return render(request, 'Home/login.html')
+        else:
+            
+            if role1 != 1:
+                form = EmployeeForm(request.POST or None, request.FILES or None)      
+                if form.is_valid():
+                    employee = form.save(commit=False)
+                    employee.user = request.user
+                    employee.save()
+                    return render(request, 'Home/details.html', {'employee': employee})
+                context = {
+                    "form": form,}
+                return render(request, 'Home/create_employee.html', context)
+            else:
+                return render(request, 'Home/restricted.html')
+
+        
 
 
 
 def create_check(request, employee_id):
+
     form = CheckForm(request.POST or None, request.FILES or None)
     employee = get_object_or_404(Employee, pk=employee_id)
-    if form.is_valid():
-        employees_checks = employee.check_set.all()
-        for s in employees_checks:
+    roles = Employee.objects.filter(user=request.user)
+    for role in roles:
+        role1= role.user_type     
+    
+        if role1 == 3 or role1 == 4:
+            if form.is_valid():
+                
+                check = form.save(commit=False)
+                check.employee = employee
+                    
+                check.save()
+                return render(request, 'Home/details.html', {'employee': employee})
             context = {'employee': employee,'form': form,}
-            check.employee = employee       
             return render(request, 'Home/create_check.html', context)
-        check.save()
-        return render(request, 'Home/details.html', {'employee': employee})
-    context = {'employee': employee,'form': form,}
-    return render(request, 'Home/create_check.html', context)
+        else:
+            return render(request, 'Home/restricted.html')
+
+
 
 
 def delete_employee(request, employee_id):
-    employee = Employee.objects.get(pk=employee_id)
-    employee.delete()
-    employees = Employee.objects.filter(user=request.user)
-    return render(request, 'Home/index.html', {'employees': employees})
+    roles = Employee.objects.filter(user=request.user)
+    for role in roles:
+        role1= role.user_type     
+
+        if role1 == 4:
+            employee = Employee.objects.get(pk=employee_id)
+            employee.delete()
+            employees = Employee.objects.filter(user=request.user)
+            return render(request, 'Home/index.html', {'employees': employees})
+        else:
+            return render(request, 'Home/restricted.html')
 
 
 def delete_check(request, employee_id, check_id):
-    employee = get_object_or_404(Employee, pk=employee_id)
-    check = Check.objects.get(pk=check_id)
-    check.delete()
-    return render(request, 'Home/details.html', {'employee': employee})
+    roles = Employee.objects.filter(user=request.user)
+    for role in roles:
+        role1= role.user_type     
+
+        if role1 !=1:
+            employee = get_object_or_404(Employee, pk=employee_id)
+            check = Check.objects.get(pk=check_id)
+            check.delete()
+            return render(request, 'Home/details.html', {'employee': employee})
+        else:
+            return render(request, 'Home/restricted.html')
 
 
 def details(request, employee_id):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return render(request, 'Home/login.html')
     else:
         user = request.user
@@ -63,12 +96,26 @@ def details(request, employee_id):
         return render(request, 'Home/details.html', {'employee': employee, 'user': user})
 
 def index(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return render(request, 'Home/login.html')
     else:
-        all_employee = Employee.objects.all()
-    context = {'all_employee' : all_employee}
-    return render(request, 'Home/index.html', context)
+        employees = Employee.objects.all()
+        check_results = Check.objects.all()
+        query = request.GET.get("q")
+        if query:
+            employees = employees.filter(
+                Q(last_name__icontains=query) |
+                Q(first_name__icontains=query)
+            ).distinct()
+            check_results = check_results.filter(
+                Q(employee__icontains=query)
+            ).distinct()
+            return render(request, 'Home/index.html', {
+                'employees': employees,
+                'checks': check_results,
+            })
+        else:
+            return render(request, 'Home/index.html', {'employees': employees})
 
 
 def logout_user(request):
@@ -93,7 +140,7 @@ def login_user(request):
             else:
                 return render(request, 'Home/login.html', {'error_message': 'Your account has been locked'})
         else:
-            return render(request, 'Home/login.html', {'error_message': 'Your username, email or password is wrong'})
+            return render(request, 'Home/login.html', {'error_message': 'Your username or password is wrong'})
     return render(request, 'Home/login.html')
 
 
@@ -118,7 +165,7 @@ def register(request):
 
 
 def checks(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return render(request, 'Home/login.html')
     else:
         try:

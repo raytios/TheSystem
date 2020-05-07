@@ -50,6 +50,7 @@
                                 <td>{{ check.time_out }}</td>
                             
                                 <td>
+                                    
                                     <form action="{% url 'home:delete_check' employee.id check.id %}" method="post" style="display: inline;">
                                         {% csrf_token %}
                                         <input type="hidden" name="check_id" value="{{ check.id }}" />

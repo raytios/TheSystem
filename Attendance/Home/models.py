@@ -3,6 +3,8 @@ from django.contrib.auth.models import Permission, User
 
 # Create your models here.
 
+    
+
 
 class Employee(models.Model):
     user = models.ForeignKey(User, default=1, on_delete=models.CASCADE,)
@@ -11,6 +13,16 @@ class Employee(models.Model):
     last_name = models.CharField(max_length=250)
     address = models.CharField(max_length=250)
     is_choose = models.BooleanField(default =False)
+    ROLE_TYPE_CHOICES = (
+        (1, 'Professor'),
+        (2, 'Dean'),
+        (3, 'VPAA'),
+        (4, 'admin'),
+    )
+    user_type = models.PositiveSmallIntegerField(null=True, choices=ROLE_TYPE_CHOICES)
+
+    def __str__(self):
+        return f'{self.user_type}'
     
     
     def __str__(self):
@@ -26,4 +38,4 @@ class Check(models.Model):
 
 class Leave(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
-    
+
