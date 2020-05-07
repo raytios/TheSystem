@@ -1,0 +1,46 @@
+{% extends 'Home/base.html' %}
+
+{% block title %}The System{% endblock %}
+{% block checks_active %}active{% endblock %}
+
+{% block body %}
+<div class="container-fluid checks-container">
+
+    <div class="row">
+
+        <div class="col-sm-12">
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Time in</th>
+                                <th>Time out</th>
+                                <th>Employee</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for check in check_list %}
+                                <tr>
+                                    <td>{{ check.time_in }}</td>
+                                    <td>{{ check.time_out }}</td>                                    
+                                    <td>
+                                        <a href="{% url 'home:details' check.employee.id %}">
+                                            <img src="https://cdn.pixabay.com/photo/2016/02/17/16/32/person-1205346_960_720.png" class="img-responsive" style="width: 20px; float: left; margin-right: 10px;" />
+                                        </a>
+                                        <a href="{% url 'home:details' check.employee.id %}">{{ check.employee.last_name }}</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

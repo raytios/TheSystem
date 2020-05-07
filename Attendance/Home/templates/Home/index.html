@@ -1,0 +1,52 @@
+{% extends 'Home/base.html' %}
+{% block employees_active %}active{% endblock %}
+
+{% block body %}
+<div class="employees-container container-fluid">
+
+    <!-- Employees -->
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>Hello, {{ user.username }}</h3>
+        </div>
+        {% if employees %}
+            {% for employee in employees %}
+                <div class="col-sm-4 col-lg-2">
+                    <div class="thumbnail">
+                        <a href="{% url 'home:details' employee.id %}">
+                            <img src="https://cdn.pixabay.com/photo/2016/02/17/16/32/person-1205346_960_720.png" class="img-responsive">
+                        </a>
+                        <div class="caption">
+                            <h3>{{ employee.first_name }}</h3>
+                            <h3>{{ employee.last_name }}</h3>
+
+                            <!-- View Details -->
+                            <a href="{% url 'home:details' employee.id %}" class="btn btn-primary btn-sm" role="button">View Details</a>
+
+                            <!-- Delete Employee -->
+                            <form action="{% url 'home:delete_employee' employee.id %}" method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="employee_id" value="{{ employee.id }}" />
+                                <button type="submit" class="btn btn-default btn-sm">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% cycle '' '' '' '' '' '<div class="clearfix visible-lg"></div>' %}
+            {% endfor %}
+        {% else %}
+            <div class="col-sm-12">
+                <br>
+                <a href="{% url 'home:create_employee' %}">
+                    <button type="button" class="btn btn-success">
+                        <span class="glyphicon glyphicon-plus"></span>&nbsp; Add an Employee
+                    </button>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

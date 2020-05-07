@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset ="UTF-8">
+  <title>{% block title %}The System{% endblock %}</title>
+  <!-- Loads the path to your static files -->
+  {% load static %}
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" type='text/css'>
+  <link rel= "stylesheet" type ="text/css" href="{% static 'Home/style.css'%}" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src= "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <script src="{% static 'Home/js/main.js' %}"></script>
+
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>                        
+        </button>
+        <a class="navbar-brand" href="{% url 'home:index' %}">The System</a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <li class="{% block employees_active %}{% endblock %}">
+            <a href="{% url 'home:index' %}"><span class="glyphicon glyphicon-user" aria-hidden="true"></img></span>&nbsp; Employee</a>
+          </li>
+          <li class="{% block checks_active %}{% endblock %}">
+            <a href="{% url 'home:checks' %}"><span class="glyphicon glyphicon-check" aria-hidden="true"></span>&nbsp;Records</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="{% url 'home:create_employee' %}"><span class="glyphicon glyphicon-plus-sign"></span> Add Employee</a></li>
+          <li><a href="{% url 'home:logout_user' %}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+{% block body %}
+
+{% endblock %}
+</head>
+<body>
+
+
+</body>
+</html>
+
+
+
